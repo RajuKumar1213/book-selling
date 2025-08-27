@@ -199,6 +199,7 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
           selectedAddOns: selectedAddOns || [],
           preparationTime: product.preparationTime, // Add preparation time from product
           customization: product.customization, // Add customization data for photo cakes
+          rating: product.rating || 0,
           _id: undefined,
         };
 

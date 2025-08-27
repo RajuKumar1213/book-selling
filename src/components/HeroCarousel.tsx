@@ -453,10 +453,10 @@ const HeroCarousel = () => {
 
                       {/* Book info below image */}
                       <div className="text-left px-1 sm:px-2">
-                        <h3 className="text-sm font-semibold text-gray-800 line-clamp-2">
+                        <h3 className="text-sm font-semibold text-gray-800 line-clamp-1">
                           {book.title}
                         </h3>
-                        <p className="text-[12px] text-gray-500">
+                        <p className="text-[12px] text-gray-500 line-clamp-1">
                           by {book.author}
                         </p>
                         <div className="mt-1 flex items-baseline justify-between">

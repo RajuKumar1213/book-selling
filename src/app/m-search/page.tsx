@@ -22,7 +22,7 @@ const products = [
     imageUrl:
       "https://rukminim2.flixcart.com/image/612/612/xif0q/regionalbooks/g/e/c/to-kill-a-mockingbird-harper-lee-original-imaheya2dhgjbfd4.jpeg?q=70",
     price: 211,
-    discountPrice: null,
+    discountPrice: undefined,
     slug: "to-kill-a-mockingbird-841",
     category: "Self-Help",
     categorySlug: "self-help",
@@ -57,7 +57,7 @@ const products = [
     imageUrl:
       "https://rukminim2.flixcart.com/image/612/612/xif0q/book/d/t/3/bookey-pride-prejudice-jane-austen-s-timeless-tale-of-love-and-original-imagmu4fcfvvyay2.jpeg?q=70",
     price: 516,
-    discountPrice: 325,
+    discountPrice: undefined,
     slug: "pride-and-prejudice-406",
     category: "Fiction",
     categorySlug: "fiction",
@@ -90,7 +90,7 @@ const products = [
     imageUrl:
       "https://rukminim2.flixcart.com/image/612/612/book/0/4/6/the-count-of-monte-cristo-original-imadtdzacwqkkwyx.jpeg?q=70",
     price: 505,
-    discountPrice: null,
+    discountPrice: undefined,
     slug: "the-count-of-monte-cristo-129",
     category: "Biography",
     categorySlug: "biography",
@@ -122,7 +122,7 @@ const products = [
       "A timeless philosophy masterpiece exploring themes of love and human nature.",
     imageUrl: "https://picsum.photos/200/300?random=3",
     price: 524,
-    discountPrice: null,
+    discountPrice: undefined,
     slug: "the-iliad-495",
     category: "Philosophy",
     categorySlug: "philosophy",
@@ -192,7 +192,7 @@ const products = [
       "A timeless literature masterpiece exploring themes of love and human nature.",
     imageUrl: "https://picsum.photos/200/300?random=6",
     price: 484,
-    discountPrice: null,
+    discountPrice: undefined,
     slug: "the-catcher-in-the-rye-229",
     category: "Literature",
     categorySlug: "literature",
@@ -227,7 +227,7 @@ const products = [
     imageUrl:
       "https://rukminim2.flixcart.com/image/612/612/xif0q/book/o/t/5/1984-original-imah9fnyzr4h6jad.jpeg?q=70",
     price: 327,
-    discountPrice: null,
+    discountPrice: undefined,
     slug: "1984-444",
     category: "Spiritual",
     categorySlug: "spiritual",
@@ -262,7 +262,7 @@ const products = [
     imageUrl:
       "https://rukminim2.flixcart.com/image/612/612/kvtuxe80/book/2/7/5/the-prophet-premium-paperback-penguin-india-original-imag8n8uch847hfp.jpeg?q=70",
     price: 751,
-    discountPrice: null,
+    discountPrice: undefined,
     slug: "the-prophet-806",
     category: "Philosophy",
     categorySlug: "philosophy",
@@ -398,7 +398,7 @@ const products = [
     imageUrl:
       "https://rukminim2.flixcart.com/image/612/612/xif0q/book/a/t/j/the-book-on-the-taboo-against-knowing-who-you-are-original-imagkqffqnxf4fb6.jpeg?q=70",
     price: 689,
-    discountPrice: null,
+    discountPrice: undefined,
     slug: "the-book:-on-the-taboo-against-knowing-who-you-are-669",
     category: "Philosophy",
     categorySlug: "philosophy",

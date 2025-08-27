@@ -91,37 +91,33 @@ const ShopByGenre = () => {
   return (
     <section className="py-16 bg-gradient-to-b from-white to-gray-50">
       <div className="container mx-auto px-4 md:px-6 lg:px-8 max-w-7xl">
-        <div className="text-center mb-12">
-          <h2 className="text-3xl md:text-4xl font-bold text-gray-900 mb-4">
+        <div className="text-left mb-12">
+          <h2 className="text-xl md:text-3xl font-bold text-gray-900 mb-2">
             Shop By <span className="text-indigo-600">Genre</span>
           </h2>
-          <p className="text-lg text-gray-600 max-w-2xl mx-auto">
+          <p className="text-md text-left text-gray-600 max-w-2xl">
             Discover your next favorite book from our curated collection of
             genres
           </p>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 md:gap-x-16 gap-y-1 gap-4 ">
           {genres.map((genre) => (
             <Link key={genre.id} href={genre.href} className="group">
-              <div className="relative overflow-hidden rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 group-hover:scale-105 bg-white">
-                <div className="aspect-[4/3] overflow-hidden">
+              <div className="relative ">
+                <div className=" overflow-hidden bg-pink-100 rounded-2xl flex items-center justify-center">
                   <img
                     src={genre.image}
                     alt={genre.name}
-                    className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500"
+                    className="w-[160px] h-full object-cover group-hover:scale-101 transition-transform duration-500"
                   />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-                <div className="absolute bottom-0 left-0 right-0 p-4 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300 ease-out">
-                  <h3 className="text-lg font-bold mb-1">{genre.name}</h3>
-                  <p className="text-sm opacity-90">{genre.description}</p>
-                </div>
-                <div className="p-4">
-                  <h3 className="text-lg font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">
+
+                <div className="p-4 text-center">
+                  <h3 className="text-sm font-semibold text-gray-900 group-hover:text-indigo-600 transition-colors">
                     {genre.name}
                   </h3>
-                  <p className="text-sm text-gray-600 mt-1">
+                  <p className="text-xs text-gray-600 mt-1">
                     {genre.description}
                   </p>
                 </div>
@@ -130,7 +126,7 @@ const ShopByGenre = () => {
           ))}
         </div>
 
-        <div className="text-center mt-12">
+        {/* <div className="text-center mt-12">
           <Link
             href="/genres"
             className="inline-flex items-center px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-lg shadow-md hover:shadow-lg transition-all duration-300"
@@ -150,7 +146,7 @@ const ShopByGenre = () => {
               />
             </svg>
           </Link>
-        </div>
+        </div> */}
       </div>
     </section>
   );
