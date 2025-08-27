@@ -19,7 +19,7 @@ export interface AddOn {
 }
 
 export interface CartItem {
-  rating: ReactNode;
+  rating: number;
   _id: Key | null | undefined;
   id: string;
   productId: string;
@@ -85,28 +85,28 @@ interface CartContextType extends CartState {
 // Action types
 type CartAction =
   | {
-    type: "ADD_TO_CART";
-    payload: {
-      product: any;
-      quantity: number;
-      selectedWeight?: string;
-      selectedAddOns?: AddOn[];
-      selectedFlavour?: string;
-    };
-  }
+      type: "ADD_TO_CART";
+      payload: {
+        product: any;
+        quantity: number;
+        selectedWeight?: string;
+        selectedAddOns?: AddOn[];
+        selectedFlavour?: string;
+      };
+    }
   | { type: "REMOVE_FROM_CART"; payload: { itemId: string } }
   | { type: "UPDATE_QUANTITY"; payload: { itemId: string; quantity: number } }
   | {
-    type: "UPDATE_CART_ITEM_ADDONS";
-    payload: { itemId: string; addOns: AddOn[] };
-  }
+      type: "UPDATE_CART_ITEM_ADDONS";
+      payload: { itemId: string; addOns: AddOn[] };
+    }
   | { type: "CLEAR_CART" }
   | { type: "ADD_TO_WISHLIST"; payload: { product: any } }
   | { type: "REMOVE_FROM_WISHLIST"; payload: { productId: string } }
   | {
-    type: "LOAD_CART";
-    payload: { items: CartItem[]; wishlist: WishlistItem[] };
-  }
+      type: "LOAD_CART";
+      payload: { items: CartItem[]; wishlist: WishlistItem[] };
+    }
   | { type: "SET_LOADING"; payload: { isLoading: boolean } };
 
 // Initial state
@@ -134,7 +134,11 @@ const calculateTotals = (items: CartItem[]) => {
   return { totalItems, totalPrice };
 };
 
-const generateCartItemId = (productId: string, selectedWeight?: string, selectedFlavour?: string) => {
+const generateCartItemId = (
+  productId: string,
+  selectedWeight?: string,
+  selectedFlavour?: string
+) => {
   let itemId = productId;
   if (selectedWeight) itemId += `-${selectedWeight}`;
   if (selectedFlavour) itemId += `-${selectedFlavour}`;
@@ -145,9 +149,18 @@ const generateCartItemId = (productId: string, selectedWeight?: string, selected
 const cartReducer = (state: CartState, action: CartAction): CartState => {
   switch (action.type) {
     case "ADD_TO_CART": {
-      const { product, quantity, selectedWeight, selectedAddOns, selectedFlavour } =
-        action.payload;
-      const itemId = generateCartItemId(product._id, selectedWeight, selectedFlavour);
+      const {
+        product,
+        quantity,
+        selectedWeight,
+        selectedAddOns,
+        selectedFlavour,
+      } = action.payload;
+      const itemId = generateCartItemId(
+        product._id,
+        selectedWeight,
+        selectedFlavour
+      );
 
       // Check if item already exists
       const existingItemIndex = state.items.findIndex(
@@ -164,17 +177,17 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
         newItems = state.items.map((item, index) =>
           index === existingItemIndex
             ? {
-              ...item,
-              quantity: item.quantity + quantity,
-              price: weightOption?.price || product.price,
-              discountedPrice:
-                weightOption?.discountedPrice || product.discountedPrice,
-              selectedAddOns: selectedAddOns || item.selectedAddOns,
-              selectedFlavour: selectedFlavour || item.selectedFlavour,
-              preparationTime:
-                product.preparationTime || item.preparationTime, // Ensure prep time is updated
-              customization: product.customization || item.customization, // Update customization if provided
-            }
+                ...item,
+                quantity: item.quantity + quantity,
+                price: weightOption?.price || product.price,
+                discountedPrice:
+                  weightOption?.discountedPrice || product.discountedPrice,
+                selectedAddOns: selectedAddOns || item.selectedAddOns,
+                selectedFlavour: selectedFlavour || item.selectedFlavour,
+                preparationTime:
+                  product.preparationTime || item.preparationTime, // Ensure prep time is updated
+                customization: product.customization || item.customization, // Update customization if provided
+              }
             : item
         );
       } else {
@@ -191,7 +204,12 @@ const cartReducer = (state: CartState, action: CartAction): CartState => {
           price: weightOption?.price || product.price,
           discountedPrice:
             weightOption?.discountedPrice || product.discountedPrice,
-          weight: selectedWeight || product.weightOptions?.[0]?.weight || "1kg",
+          weight:
+            selectedWeight ||
+            product.weightOptions?.[0]?.weight ||
+            (product.weightOptions && product.weightOptions.length > 0
+              ? "1kg"
+              : "1 Piece"),
           quantity,
           selectedWeight,
           selectedFlavour,
@@ -373,49 +391,59 @@ export function CartProvider({ children }: { children: ReactNode }) {
     if (!state.isLoading) {
       try {
         // Create a lightweight version of cart items for storage
-        const itemsToStore = state.items.map(item => ({
+        const itemsToStore = state.items.map((item) => ({
           ...item,
           // For photo cakes, remove the File object to save space
-          customization: item.customization ? {
-            ...item.customization,
-            image: null, // Remove File object, keep imageUrl
-            imageUrl: item.customization.imageUrl
-          } : item.customization
+          customization: item.customization
+            ? {
+                ...item.customization,
+                image: null, // Remove File object, keep imageUrl
+                imageUrl: item.customization.imageUrl,
+              }
+            : item.customization,
         }));
-        
+
         localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(itemsToStore));
       } catch (error) {
         console.error("Error saving cart to localStorage:", error);
-        
+
         // If storage quota exceeded, try to clear some space
-        if (error instanceof Error && error.name === 'QuotaExceededError') {
+        if (error instanceof Error && error.name === "QuotaExceededError") {
           console.warn("localStorage quota exceeded, attempting cleanup...");
           try {
             // Clear old pending orders and other non-essential data
-            localStorage.removeItem('pending-order');
-            localStorage.removeItem('bakingo-selected-addons');
-            localStorage.removeItem('bakingo-addon-quantities');
-            
+            localStorage.removeItem("pending-order");
+            localStorage.removeItem("bakingo-selected-addons");
+            localStorage.removeItem("bakingo-addon-quantities");
+
             // Try again with minimal data
-            const minimalItems = state.items.map(item => ({
+            const minimalItems = state.items.map((item) => ({
               id: item.id,
               productId: item.productId,
               name: item.name,
               price: item.price,
               quantity: item.quantity,
               weight: item.weight,
-              customization: item.customization ? {
-                type: item.customization.type,
-                message: item.customization.message,
-                imageUrl: item.customization.imageUrl,
-                image: null
-              } : undefined
+              customization: item.customization
+                ? {
+                    type: item.customization.type,
+                    message: item.customization.message,
+                    imageUrl: item.customization.imageUrl,
+                    image: null,
+                  }
+                : undefined,
             }));
-            
-            localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(minimalItems));
+
+            localStorage.setItem(
+              CART_STORAGE_KEY,
+              JSON.stringify(minimalItems)
+            );
             console.log("Cart saved with minimal data after cleanup");
           } catch (retryError) {
-            console.error("Failed to save cart even after cleanup:", retryError);
+            console.error(
+              "Failed to save cart even after cleanup:",
+              retryError
+            );
           }
         }
       }
@@ -445,7 +473,13 @@ export function CartProvider({ children }: { children: ReactNode }) {
   ) => {
     dispatch({
       type: "ADD_TO_CART",
-      payload: { product, quantity, selectedWeight, selectedAddOns, selectedFlavour },
+      payload: {
+        product,
+        quantity,
+        selectedWeight,
+        selectedAddOns,
+        selectedFlavour,
+      },
     });
   };
 

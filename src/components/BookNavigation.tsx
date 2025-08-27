@@ -151,7 +151,9 @@ export default function BookNavigation() {
   };
 
   const handleDropdown = (group: string) => {
-    if (groupedCategories[group as keyof typeof groupedCategories]?.length > 1) {
+    if (
+      groupedCategories[group as keyof typeof groupedCategories]?.length > 1
+    ) {
       setIsDropdownOpen(group.toLowerCase());
     }
   };
@@ -192,17 +194,16 @@ export default function BookNavigation() {
       <div className="container mx-auto px-2 flex items-center justify-center relative">
         <div className="flex items-center justify-start flex-wrap space-x-4 py-2 nav-scroll-container">
           {Object.keys(groupedCategories).map((group) => {
-            const categoriesByType = groupedCategories[group as keyof typeof groupedCategories].reduce(
-              (acc: any, category) => {
-                const type = category.type || 'Other';
-                if (!acc[type]) {
-                  acc[type] = [];
-                }
-                acc[type].push(category);
-                return acc;
-              },
-              {}
-            );
+            const categoriesByType = groupedCategories[
+              group as keyof typeof groupedCategories
+            ].reduce((acc: any, category) => {
+              const type = category.type || "Other";
+              if (!acc[type]) {
+                acc[type] = [];
+              }
+              acc[type].push(category);
+              return acc;
+            }, {});
 
             return (
               <div
@@ -216,8 +217,16 @@ export default function BookNavigation() {
                 <button
                   className="flex text-sm font-extrabold items-center space-x-1 hover:text-blue-600 whitespace-nowrap px-2 py-[6px] transition-colors duration-200 group"
                   onClick={(e) => {
-                    if (groupedCategories[group as keyof typeof groupedCategories].length === 1) {
-                      handleCategoryClick(groupedCategories[group as keyof typeof groupedCategories][0].slug, e);
+                    if (
+                      groupedCategories[group as keyof typeof groupedCategories]
+                        .length === 1
+                    ) {
+                      handleCategoryClick(
+                        groupedCategories[
+                          group as keyof typeof groupedCategories
+                        ][0].slug,
+                        e
+                      );
                     }
                   }}
                 >
@@ -227,7 +236,8 @@ export default function BookNavigation() {
                 </button>
 
                 {isDropdownOpen === group.toLowerCase() &&
-                  groupedCategories[group as keyof typeof groupedCategories].length > 1 && (
+                  groupedCategories[group as keyof typeof groupedCategories]
+                    .length > 1 && (
                     <div
                       className="absolute top-full -left-1 bg-white backdrop-blur-lg shadow-xl rounded-none border border-blue-100 overflow-hidden"
                       style={{
@@ -280,7 +290,9 @@ export default function BookNavigation() {
                           </div>
                         ) : (
                           <div className="p-3 flex flex-col">
-                            {groupedCategories[group as keyof typeof groupedCategories].map((category) => (
+                            {groupedCategories[
+                              group as keyof typeof groupedCategories
+                            ].map((category) => (
                               <button
                                 key={category._id}
                                 onClick={(e) =>

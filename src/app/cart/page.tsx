@@ -14,7 +14,6 @@ import {
   CreditCard,
   Heart,
   Star,
-  Gift,
   Calendar,
   Truck,
   BookOpen,
@@ -25,7 +24,6 @@ import {
 import { Button } from "@/components/ui/button";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import AddOns from "@/components/AddOns";
 import { useAuth } from "@/contexts/AuthContext";
 import { useRouter } from "next/navigation";
 import Login from "@/components/Login";
@@ -43,7 +41,7 @@ const trustFeatures = [
   },
   {
     icon: Heart,
-  title: "Book Lovers Community",
+    title: "Book Lovers Community",
     description: "500K+ readers served",
   },
 ];
@@ -61,116 +59,6 @@ export default function CartPage() {
   const { user } = useAuth();
   const router = useRouter();
   const [showLogin, setShowLogin] = useState(false);
-  const [selectedAddOns, setSelectedAddOns] = React.useState<any[]>([]);
-  const [addOnQuantities, setAddOnQuantities] = React.useState<{
-    [key: string]: number;
-  }>({});
-
-  // Function to load add-ons from localStorage
-  const loadAddOnsFromStorage = React.useCallback(() => {
-    if (typeof window === "undefined") return;
-
-    try {
-      const saved = localStorage.getItem("bookworm-selected-addons");
-      const savedQuantities = localStorage.getItem("bookworm-addon-quantities");
-
-      if (saved) {
-        const addOns = JSON.parse(saved);
-        setSelectedAddOns(addOns);
-
-        let quantities: { [key: string]: number } = {};
-        if (savedQuantities) {
-          quantities = JSON.parse(savedQuantities);
-        }
-
-        addOns.forEach((addOn: any) => {
-          if (!quantities[addOn._id]) {
-            quantities[addOn._id] = 1;
-          }
-        });
-
-        setAddOnQuantities(quantities);
-        localStorage.setItem(
-          "bookworm-addon-quantities",
-          JSON.stringify(quantities)
-        );
-      } else {
-        setSelectedAddOns([]);
-        setAddOnQuantities({});
-      }
-    } catch (error) {
-      console.error("Error loading selected add-ons:", error);
-    }
-  }, []);
-
-  React.useEffect(() => {
-    if (typeof window === "undefined") return;
-
-    loadAddOnsFromStorage();
-
-    const handleStorageChange = (e: StorageEvent) => {
-      if (
-        e.key === "bookworm-selected-addons" ||
-        e.key === "bookworm-addon-quantities"
-      ) {
-        loadAddOnsFromStorage();
-      }
-    };
-
-    const handleCustomStorageChange = () => {
-      loadAddOnsFromStorage();
-    };
-
-    window.addEventListener("storage", handleStorageChange);
-    window.addEventListener("addons-updated", handleCustomStorageChange);
-
-    return () => {
-      window.removeEventListener("storage", handleStorageChange);
-      window.removeEventListener("addons-updated", handleCustomStorageChange);
-    };
-  }, [loadAddOnsFromStorage]);
-
-  const updateAddOnQuantity = (addOnId: string, newQuantity: number) => {
-    if (typeof window === "undefined") return;
-
-    if (newQuantity <= 0) {
-      const updatedAddOns = selectedAddOns.filter(
-        (addOn) => addOn._id !== addOnId
-      );
-      setSelectedAddOns(updatedAddOns);
-      localStorage.setItem(
-        "bookworm-selected-addons",
-        JSON.stringify(updatedAddOns)
-      );
-
-      const newQuantities = { ...addOnQuantities };
-      delete newQuantities[addOnId];
-      setAddOnQuantities(newQuantities);
-      localStorage.setItem(
-        "bookworm-addon-quantities",
-        JSON.stringify(newQuantities)
-      );
-
-      window.dispatchEvent(new CustomEvent("addons-updated"));
-    } else {
-      const newQuantities = {
-        ...addOnQuantities,
-        [addOnId]: newQuantity,
-      };
-      setAddOnQuantities(newQuantities);
-      localStorage.setItem(
-        "bookworm-addon-quantities",
-        JSON.stringify(newQuantities)
-      );
-    }
-  };
-
-  const getAddOnsTotal = () => {
-    return selectedAddOns.reduce((total, addOn) => {
-      const quantity = addOnQuantities[addOn._id] || 1;
-      return total + addOn.price * quantity;
-    }, 0);
-  };
 
   if (items.length === 0) {
     return (
@@ -241,7 +129,7 @@ export default function CartPage() {
                 Reading Cart
               </h1>
               <p className="text-gray-600 mt-1 text-xs md:text-sm">
-                {totalItems} book{totalItems !== 1 ? 's' : ''} in your cart
+                {totalItems} book{totalItems !== 1 ? "s" : ""} in your cart
               </p>
             </div>
             <Button
@@ -314,20 +202,6 @@ export default function CartPage() {
                               {item.name}
                             </h3>
                           </Link>
-                          <div className="flex items-center gap-2 md:gap-3 mb-2">
-                            <span className="bg-purple-100 px-2 py-0.5 md:py-1 rounded-full text-xs text-purple-700">
-                              {item.weight}
-                            </span>
-                            {item.selectedFlavour && (
-                              <span className="bg-indigo-100 px-2 py-0.5 md:py-1 rounded-full text-xs text-indigo-700">
-                                {item.selectedFlavour}
-                              </span>
-                            )}
-                            <div className="flex items-center gap-1">
-                              <Star className="w-3 h-3 text-yellow-400 fill-current" />
-                              <span className="text-xs text-gray-600">{item?.rating}</span>
-                            </div>
-                          </div>
 
                           <div className="flex flex-col gap-2 md:gap-3">
                             {/* Price */}
@@ -344,7 +218,7 @@ export default function CartPage() {
                                     {Math.round(
                                       ((item.price - item.discountedPrice) /
                                         item.price) *
-                                      100
+                                        100
                                     )}
                                     % OFF
                                   </span>
@@ -407,121 +281,6 @@ export default function CartPage() {
                   ))}
                 </div>
               </div>
-
-              {/* Add-ons Section */}
-              {selectedAddOns.length > 0 && (
-                <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-purple-100">
-                  <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-3 md:p-4">
-                    <h2 className="text-base md:text-lg font-semibold flex items-center gap-2">
-                      <Gift className="w-4 h-4 md:w-5 md:h-5" />
-                      Reading Accessories
-                    </h2>
-                    <p className="text-purple-100 mt-1 text-xs md:text-sm">
-                      Enhance your reading experience
-                    </p>
-                  </div>
-
-                  <div className="p-2 md:p-3">
-                    <div className="space-y-1.5 md:space-y-2">
-                      {selectedAddOns.map((addOn) => (
-                        <div
-                          key={addOn._id}
-                          className="flex items-center justify-between p-1.5 md:p-2 bg-purple-50 rounded-lg border border-purple-200"
-                        >
-                          <div className="flex items-center gap-2 flex-1">
-                            <div className="w-6 h-6 md:w-8 md:h-8 relative rounded overflow-hidden flex-shrink-0 aspect-square">
-                              <Image
-                                src={addOn.image}
-                                alt={addOn.name}
-                                fill
-                                className="object-cover"
-                                onError={(e) => {
-                                  e.currentTarget.src = "/images/bookmark.webp";
-                                }}
-                              />
-                            </div>
-                            <div className="flex-1 min-w-0">
-                              <h4 className="font-medium text-gray-800 text-xs truncate">
-                                {addOn.name}
-                              </h4>
-                              <div className="flex items-center gap-1">
-                                <Star className="w-2.5 h-2.5 text-yellow-400 fill-current" />
-                                <span className="text-xs text-gray-600">
-                                  {addOn.rating}
-                                </span>
-                                <span className="text-xs text-gray-500 ml-1">
-                                  ₹{addOn.price} each
-                                </span>
-                              </div>
-                            </div>
-                          </div>
-
-                          <div className="flex items-center gap-1.5 md:gap-2">
-                            {/* Quantity Controls */}
-                            <div className="flex items-center bg-white rounded border border-purple-200">
-                              <button
-                                onClick={() =>
-                                  updateAddOnQuantity(
-                                    addOn._id,
-                                    (addOnQuantities[addOn._id] || 1) - 1
-                                  )
-                                }
-                                className="p-0.5 hover:bg-purple-100 rounded-l transition-colors"
-                              >
-                                <Minus className="w-2.5 h-2.5" />
-                              </button>
-                              <span className="px-1.5 py-0.5 font-medium min-w-[1.5rem] text-center text-xs">
-                                {addOnQuantities[addOn._id] || 1}
-                              </span>
-                              <button
-                                onClick={() =>
-                                  updateAddOnQuantity(
-                                    addOn._id,
-                                    (addOnQuantities[addOn._id] || 1) + 1
-                                  )
-                                }
-                                className="p-0.5 hover:bg-purple-100 rounded-r transition-colors"
-                              >
-                                <Plus className="w-2.5 h-2.5" />
-                              </button>
-                            </div>
-
-                            {/* Total Price */}
-                            <span className="font-semibold text-purple-600 text-xs min-w-[2rem] text-right">
-                              ₹{addOn.price * (addOnQuantities[addOn._id] || 1)}
-                            </span>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                    <div className="mt-2 md:mt-3 pt-2 border-t border-purple-200">
-                      <div className="flex justify-between items-center font-bold text-sm">
-                        <span className="text-gray-800">Accessories Total:</span>
-                        <span className="text-purple-600">
-                          ₹{getAddOnsTotal()}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* All Available Add-ons Section */}
-              <div className="bg-white rounded-lg shadow-lg overflow-hidden border border-purple-100">
-                <div className="bg-gradient-to-r from-purple-600 to-indigo-600 text-white p-3 md:p-4">
-                  <h2 className="text-base md:text-lg font-semibold flex items-center gap-2">
-                    <Bookmark className="w-4 h-4 md:w-5 md:h-5" />
-                    More Reading Essentials
-                  </h2>
-                  <p className="text-purple-100 mt-1 text-xs md:text-sm">
-                    Complete your reading experience
-                  </p>
-                </div>
-
-                <div className="p-2 md:p-4">
-                  <AddOns showTitle={false} layout="flat" maxItems={6} />
-                </div>
-              </div>
             </div>
 
             {/* Order Summary */}
@@ -535,23 +294,13 @@ export default function CartPage() {
                   <div className="space-y-3 mb-4">
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600 text-sm">
-                        Subtotal ({totalItems} book{totalItems !== 1 ? 's' : ''})
+                        Subtotal ({totalItems} book{totalItems !== 1 ? "s" : ""}
+                        )
                       </span>
                       <span className="font-semibold text-sm">
                         ₹{totalPrice.toFixed(2)}
                       </span>
                     </div>
-
-                    {selectedAddOns.length > 0 && (
-                      <div className="flex justify-between items-center">
-                        <span className="text-gray-600 text-sm">
-                          Accessories ({selectedAddOns.length} items)
-                        </span>
-                        <span className="font-semibold text-sm">
-                          ₹{getAddOnsTotal().toFixed(2)}
-                        </span>
-                      </div>
-                    )}
 
                     <div className="flex justify-between items-center">
                       <span className="text-gray-600 text-sm">Delivery</span>
@@ -565,7 +314,7 @@ export default function CartPage() {
                       <div className="flex justify-between text-lg font-bold">
                         <span>Total</span>
                         <span className="text-purple-600">
-                          ₹{(totalPrice + getAddOnsTotal()).toFixed(2)}
+                          ₹{totalPrice.toFixed(2)}
                         </span>
                       </div>
                     </div>
@@ -630,16 +379,11 @@ export default function CartPage() {
             <div className="flex items-center justify-between gap-3">
               <div className="flex-1">
                 <div className="text-xs text-gray-600">
-                  Total ({totalItems} book{totalItems !== 1 ? 's' : ''})
+                  Total ({totalItems} book{totalItems !== 1 ? "s" : ""})
                 </div>
                 <div className="text-lg md:text-xl font-bold text-purple-600">
-                  ₹{(totalPrice + getAddOnsTotal()).toFixed(2)}
+                  ₹{totalPrice.toFixed(2)}
                 </div>
-                {selectedAddOns.length > 0 && (
-                  <div className="text-xs text-gray-500">
-                    + {selectedAddOns.length} accessories
-                  </div>
-                )}
               </div>
 
               <Button
